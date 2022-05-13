@@ -1,1 +1,123 @@
 
+Job ID: 
+
+http://andromeda.student.eecs.qmul.ac.uk:8088/proxy/application_1648683650522_1361/
+
+Job 1 Python File: b1_final.py
+
+Examine the Data: The first step was to examine the transactions data on the HDFS. The transaction data field used in this job was ‘to_address’ and ‘value’.
+
+Write code and implement: 
+
+Mapper: The following provides detail of the code at Mapper stage:
+
+Split transaction fields: A fields variable was created that split the transactions by comma (‘,’).  This enabled access to each of the 7 fields in the transactions data. 
+Exclude malformed lines: An if statement was used to continue based on the condition that each line had to equal 7. If each line did not equal 7 the code passed on the exception. This enabled the code to not include any malformed lines. 
+To address: A ‘to_address’ variable was created, and each field 2 line was stored. 
+Value: A variable titled ‘value’ was created, and each field 3 (value) line of the transactions data was stored.
+Mapper output: The following mapper output was yielded:
+
+•	Key: to_address.
+•	Value: value
+
+Combiner: A combiner was used to decrease computational time. The purpose of this was to act as a mini reducer processing the data from the Mapper before being passed to the Reducer. The key values that were yielded were:
+
+•	Key: to_address 
+•	Value: The sum of each transaction (‘value’ field) in each mapper. 
+
+
+Reducer: The following was yielded as part of the reducer stage:
+
+•	Key:  to_address 
+•	Value: The sum of each transaction (‘value’ field) for each to_address.
+
+Job 2:  Joining Transactions/Contracts and Filtering
+
+“Once you have obtained this aggregate of the transactions, the next step is to perform a repartition join between this aggregate and contracts(example here and slides  here). You will want to join the to_address field from the output of Job 1 with the address field of contracts. Secondly, in the reducer, if the address for a given aggregate from Job 1 was not present within contracts this should be filtered out as it is a user address and not a smart contract.”
+
+Job ID: 
+
+http://andromeda.student.eecs.qmul.ac.uk:8088/proxy/application_1648683650522_1382/
+
+Job 1 Python File: b2_final.py
+
+Examine the Data: The first step was to examine the data on the HDFS. The contracts data was used in this job. The outputs of Job 1 titled Initial_Aggregation.txt’ was also used. The following fields used are as follows:
+
+Data: Contracts
+Fields: address 
+
+Data: Initial_Aggregation.txt’
+Fields: address 
+Fields: value
+
+Write code and implement: 
+
+Mapper: The following provides detail of the code at Mapper stage:
+
+Initial_Aggregation.txt Data:
+
+•	Split fields: A fields variable was created that split the fields by tab (‘\t’).  
+•	Join Key: address (field 0)
+•	Join Value: aggregate value (field 1 )
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: address 
+o	Value: value and integer 1 as an identifier for later use
+
+Contracts Data: 
+
+•	Split fields: A fields variable was created that split the fields by comma (‘,’).  
+•	Join Key: to_address (field 0)
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: address
+o	Value: None and integer 2 as an identifier for later use.
+
+As you will see two mapper yield operations were performed. One on the Initial_Aggregation.txt and one on the Contracts data. This operation was created to produce smart contract addresses that only appear in both the Contracts data and Initial Aggregation data as keys.
+
+Reducer: The following was yielded as part of the reducer stage:
+
+o	Key: to_address (only smart contacts that appear in both Contracts data and Initial Aggregation data)
+o	Value: aggregate value for each smart contract.
+
+
+Job 3: Top 10
+Finally, the third job will take as input the now filtered address aggregates and sort these via a top ten reducer, utilizing what you have learned from lab 4.
+
+Job ID: 
+
+http://andromeda.student.eecs.qmul.ac.uk:8088/proxy/application_1648683650522_1393/
+
+Job 1 Python File: b3_final.py
+
+Examine the Data: The output of Job 2 was used to sort the top 10 values. 
+
+Write code and implement: 
+
+Mapper: The following provides detail of the code at Mapper stage:
+
+Data: Output2 (from Job2)
+
+
+•	Split fields: A fields variable was created that split the fields by tab (‘\t’).  
+•	Address: address field.
+•	Aggregate: aggregate value field.
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: None (Null)
+o	Value: address and aggregate fields as a tuple. 
+
+Combiner: A combiner was used. The purpose of this was to act as a mini reducer processing the data from the Mapper before being passed to the Reducer. Each value was sorted using sorted and lambda function. A sorted values container of tuples was looped through, and the address and aggregate values were yielded. A counter was used and set to break the loop operation once 10 values had been yielded. 
+
+The following was yielded:
+
+•	Key: String ‘Top 10’ 
+•	Value: address and aggregate value tuple.
+
+Reducer: The following was yielded as part of the reducer stage:
+
+o	Key: top 10 smart contract addresses
+o	Value: aggregated value for each 10 smart contract addresses
+
+
+Note that the same sorted values operation was applied at reducer stage also breaking once 10 values were yielded
