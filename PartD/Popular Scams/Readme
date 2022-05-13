@@ -1,1 +1,69 @@
 
+JOB1: Total Value of Scams by Category and Status
+
+Examine the Data: The first step was to examine the data on HDFS. The transactions data and scams.json file were used. 
+
+Mapper: The following provides detail of the code at Mapper stage:
+
+Pre-processing: to enable faster operation the json file was downloaded from HDFS and converted to CSV. Object fields were accessed and appended to lists being: 
+
+addresses:  list of known addresses associated with the scam. 
+category: category of scam (i.e., phishing, etc)
+status: active status of scam (i.e., active, inactive, offline etc).
+id: IP address of reporter. 
+
+Note that each address field has multiple addresses. As such the data was decoupled using a for loop such that each address was represented as a line (please refer to pre-proceccing.py file for further details of the logic related to the operation). Once this was done, each list was appended to a dataframe and sent to CSV. This data was then used as part of the below operations in place of the scams json file. 
+
+In this task two mappers and two reducers were created. 
+
+Mapper1: The following provides detail of the code at Mapper stage:
+
+
+Transactions Data:
+
+•	Split transaction fields: A fields variable was created that split the transactions by comma (‘,’).  This enabled access to each field in the transactions data. 
+•	Exclude malformed lines: An if statement was used to continue based on the condition that each line had to equal 7. If each line did not equal 7 the code passed on the exception. This enabled the code to not include any malformed lines. 
+•	To_address: A to_address variable was created, and each field 2 line was stored. 
+•	Value: A value variable was created, and each field 3 (value) line of the data was stored.
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: to_address
+o	Value: value, and 0 as an identifier for later use. 
+
+Pre-processed Scams CSV:
+
+The following variables were created and used:
+
+o	category: field 2
+o	status: field 3
+o	address:  field 4
+
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: address
+o	Value: status, category and 1 as identifier for later use. 
+
+Reducer1:
+
+The following variables and containers were created:
+
+•	Transaction variable: used to store the value of transactions
+•	Category list: used to store the category of scams
+•	Status list: used to store the status of scams 
+
+A for loop was created such that if the identifier at the mapper equalled 0, each transaction value was summed and stored in the transaction variable above. An else statement was created such that the second yielded key value pair was accessed, and the category value was appended to the category list and the status value was appended to the status list.  
+
+Once the above was run an if statement was created conditional on each list including an element. Once this logic was satisfied a for loop iterated over each value in the category and status lists.  The final yielded results were as follows:
+
+o	Key: category and status
+o	Value: value 
+
+Mapper2: The following provides detail of the code at Mapper stage:
+
+A second mapper was created to yield the key and value from reducer 1. 
+
+Reducer2: A second reducer was created that took the key and sum of values from Mapper2:
+
+
+o	Key: category and status
+o	Value: sum of value 
