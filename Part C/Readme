@@ -1,1 +1,37 @@
 
+Job ID: 
+
+http://andromeda.student.eecs.qmul.ac.uk:8088/proxy/application_1649894236110_5620/
+
+Job 1 Python File: c1_final.py
+
+Examine the Data: The first step was to examine the data on the HDFS system. The blocks data was used in this job. The fields used are as follows:
+
+	Field 2: miner 
+Field 4: size
+Write code and implement: 
+
+Mapper: The following provides detail of the code at Mapper stage:
+
+•	Split transaction fields: A fields variable was created that split the transactions by comma (‘,’).  This enabled access to each of the 9 fields in the blocks data. 
+•	Exclude malformed lines: An if statement was used to continue based on the condition that each line had to equal 9. If each line did not equal 9 the code passed on the exception. This enabled the code to not include any malformed lines. 
+•	Miner: A miner variable was created, and each field 2 line was stored. 
+•	Size: A size variable was created, and each field 4 (‘size’) line of the data was stored.
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: None (null)
+o	Value: miner and size. 
+
+Combiner: A combiner was used. The purpose of this was to act as a mini reducer processing the data from the Mapper before being passed to the Reducer. The key values that were yielded for each mapper were:
+
+•	Key: ‘Top 10’ (String)
+•	Value: miner and size.
+
+Each value was sorted using a lambda function and stored in a sorted values container. The sortedvalues was looped through and the miner and address were yielded. A counter was used and set to 10 to break the loop operation once 10 values had been yielded.
+
+Reducer: The following was yielded as part of the reducer stage:
+
+o	Key: String ‘Top 10 Miners’.
+o	Value: miners
+
+Each value was sorted using sorted and lambda function. A sorted values container of tuples was looped through, and the miners were yielded as a value. A counter was used and set to break the loop operation once 10 values had been yielded.
