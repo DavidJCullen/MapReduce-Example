@@ -1,1 +1,33 @@
 
+Job 1: Transactions occurring each month:
+
+Job ID: 
+
+http://andromeda.student.eecs.qmul.ac.uk:8088/proxy/application_1649894236110_4851/
+
+Job 1 Python File: a1_final.py
+
+Examine the Data: The first step was to examine the transactions data on the HDFS system. The transaction data field used in this job was ‘block_timestamp’.
+
+Write code and implement: 
+
+Mapper: The following provides detail of the code at Mapper stage:
+
+•	Split transaction fields: A fields variable was created that split the transactions by comma (‘,’).  This enabled access to each of the 7 fields in the transactions data. 
+•	Exclude malformed lines: An if block was used to continue based on the condition that each line had to equal 7. If each line did not equal 7 the code passed on the exception. This enabled the code to not include any malformed lines. 
+•	Timestamp variable: A data variable was created and each field 6 line was stored. This was the unix timestamp. The unix timestamp was converted to month and year string format.
+
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: Month and Year 
+o	Value: Integer of value 1 (this enabled the count of each transaction each month for each year to be undertaken).
+
+Combiner: A combiner was used to decrease computational time. The purpose of this was to act as a mini reducer processing the data from the Mapper before being passed to the Reducer. The key values that were yielded were:
+
+•	Key: Month and Year 
+•	Value: An integer with the count of times that a transaction (based on Month and Year count) appeared for each Mapper.
+
+Reducer: The following was yielded as part of the reducer stage:
+
+•	Key: Month and Year 
+•	Value: An integer with the count of times that that a transaction (based on Month and Year count appeared across all mappers).
