@@ -31,3 +31,36 @@ Reducer: The following was yielded as part of the reducer stage:
 
 •	Key: Month and Year 
 •	Value: An integer with the count of times that that a transaction (based on Month and Year count appeared across all mappers).
+
+Job 2: Average value of transactions in each month between the start and end of the dataset.
+
+Job ID: 
+
+http://andromeda.student.eecs.qmul.ac.uk:8088/proxy/application_1649894236110_4866/
+
+Python file: a2_final.py
+
+Examine the Data:  The first step was to examine transactions data on the HDFS system. The fields that were needed for this section of the job were the ‘block_timestamp’  and ‘value’  fields of the transactions data. 
+
+Mapper: The following provides detail of the code included at Mapper Input stage:
+•	Split transaction fields: A fields variable was created that split the transactions by comma (‘,’).  This enabled access to each of the 7 fields in the transactions data. 
+•	Exclude malformed lines: An if block was used to continue based on the condition that each line had to equal 7. If each line did not equal 7 the code passed on the exception. This enabled the code to not include any malformed lines. 
+•	Timestamp variable: A variable titled ‘date_my’ was created, and each field 6 (‘block_timestamp’) line was stored in it. This was the unix timestamp. The unix timestamp was converted to month and year string format.
+•	Value: A value variable was created, and each field 3 (‘value’) line of the transaction data was stored.
+
+Mapper Output: The following mapper output was yielded:
+
+o	Key: Month and Year 
+o	Value: Gas Price and Integer 1 (for count operation later). 
+
+Combiner: A combiner was used to decrease computation time. The key value pairs were as follows: 
+
+•	Key: Month and Year  
+•	Value: The count of each transaction and the total value of each transaction. This was achieved by looping through the Mapper value output.  The first element of price [0] (count) was stored in variable titled ‘count’ using the += operator resulting in the total count for each date for each Mapper. The second element [1] (value) was stored in variable titled ‘total’ using the += operator, resulting in the total sum in each Mapper.
+
+The combined output of each mapper was then passed to the Reducer.
+
+Reducer output: The Reducer key value pairs were as follows: 
+
+•	Key: Month and Year 
+•	Value: The total count of each transaction (by Month and Year) divided by the total value of each transaction (by Month and Year).
