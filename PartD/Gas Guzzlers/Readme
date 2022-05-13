@@ -1,1 +1,111 @@
 
+Two jobs were created to complete this task. 
+
+Job 1 aims to answer the following: For any transaction on Ethereum a user must supply gas. How has gas price changed over time? Have contracts become more complicated, requiring more gas, or less so?
+
+Job 2 aims to answer the following: Also, could you correlate the complexity for some of the top-10 contracts found in Part-B by observing the change over their transactions.
+
+JOB 1: 
+
+Job ID:
+
+http://andromeda.student.eecs.qmul.ac.uk:8088/proxy/application_1649894236110_4519/
+
+Examine the Data: The first step was to examine the data on HDFS. The blocks and contracts data were used. 
+
+Data: Blocks
+
+Fields used:
+
+•	gas_used: field 6
+•	number: field 0
+•	difficulty: field 3
+•	timestamp: field 7
+
+
+Data: Contracts: 
+
+Fields used:
+
+•	block_number: field 3
+
+Write code and implement: 
+
+Mapper: The following provides detail of the code at Mapper stage:
+
+•	Split transaction fields: A fields variable was created that split the data by comma (‘,’).  This enabled access to each of the fields of each dataset
+
+Blocks Data:
+ 
+•	Exclude malformed lines: A if statement was used to continue based on the condition that each line had to equal 9. If each line did not equal 9 the code passed on the exception. This enabled the code to not include any malformed lines. 
+•	Gas_used: A ‘gas_used variable was created, and each field 6 line was stored. 
+•	Blocks: A variable titled ‘blocks’ was created, and each field 0 (‘number’) line was stored in it.
+•	Difficulty: A variable titled ‘difficulty’ was created, and each field 3 (‘difficulty) line was stored in it.
+•	Timestamp: a time_stmp variable was created that converted the unix code in field 7 to gmtime, returning a string of month and year.
+
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: blocks 
+o	Value: An integer 1 as an identifier, gas_used, difficulty and time_stmp tuple
+
+Contracts Data:
+
+•	Exclude malformed lines: An if statement was used to continue based on the condition that each line had to equal 5. If each line did not equal 5 the code passed on the exception. This enabled the code to not include any malformed lines. 
+•	Blocks: A variable titled ‘blocks’ was created, and each field 3 (‘block_number’) line was stored in it.
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: blocks 
+o	Value: An integer 2 as an identifier.
+
+Reducer: The following was yielded as part of the reducer stage:
+
+A list was created to store the gas_used, difficulty and time_stmp tuple. The first key value pairs (blocks) were accessed and the values gas_used, difficulty and time_stmp tuple were stored in list _values list for later use. Each time the second key value pair (contracts data) was accessed a check counter was added.
+
+If both key value pairs were accessed, meaning they shared the same key the following was yielded:
+
+o	Key:  time_stmp
+o	Value: gas_used, difficulty tuple. 
+
+JOB2: 
+
+Job ID:
+
+job: http://andromeda.student.eecs.qmul.ac.uk:8088/proxy/application_1649894236110_4577/
+
+6 of the top miners were selceted from the top 10 contracts (See file titled top6.csv)
+
+Write code and implement: 
+
+Mapper: The following provides detail of the code at Mapper stage:
+
+•	Split transaction fields: A fields variable was created that split the transactions by comma (‘,’).  This enabled access to each of the fields of each dataset
+
+Transactions Data:
+ 
+•	Exclude malformed lines: A was used to continue based on the condition that each line had to equal 7. If each line did not equal 7 the code passed on the exception. This enabled the code to not include any malformed lines. 
+•	Gasprice: A ‘gas_used variable was created, and each field 3 line was stored. 
+•	Timestamp: a time_stmp variable was created that converted the unix code in field 7 to gmtime, returning a string of month and year.
+•	To_address: A ‘To_address’ variable was created, and each field 2 line was stored.
+
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: to_address.
+o	Value: gas_price, time_stamp and 1 as an identifier.
+
+Top_6_data:
+
+•	Exclude malformed lines: A m if statement was used to continue based on the condition that each line had to equal 2. If each line did not equal 2 the code passed on the exception. This enabled the code to not include any malformed lines. 
+•	Join_key: A ‘join_key’ variable was created, and each field 0 (contract address) line was stored. 
+
+•	Mapper output: The following mapper output was yielded:
+
+o	Key: join_key (contract address)
+o	Value: 2 as an identifier and None (null) 
+
+•	Reducer output: The following output was yielded and only included the top 6 addresses:
+
+o	Key: time_stamp
+o	Value: gas_price
+
+
+
