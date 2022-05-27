@@ -5,12 +5,11 @@ from mrjob.job import MRJob
 class PartC1(MRJob):
 
     def mapper (self,_,line) :
+        
         try:
             fields = line.split(",")
             if len(fields) == 9:
-                #acess miner field
                 miner = fields[2]
-                #access the size field
                 size = int(fields[4])
                 yield (None,(miner, size))
         except:
