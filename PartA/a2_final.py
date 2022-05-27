@@ -14,7 +14,7 @@ class PartA(MRJob):
                 value = float(fields[3]) # value field
                 date = time.gmtime(int(fields[6]))# timestamp field
                 date_my = time.strftime("%m%y",(date)) # convert timestamp to gmtime
-                yield ((date_my), (1, value)) # yeild date as key and interger and value as as value in the key value pair.
+                yield ((date_my), (1, value)) # yield date as key and integer and value as value in the key value pair.
         except:
             pass
 
@@ -34,7 +34,7 @@ class PartA(MRJob):
             count += p[0]
             total += p[1]
 
-        yield (key, (total/count)) #yeild date and average value.
+        yield (key, (total/count)) #yield date and average value.
 
 if __name__=='__main__':
     PartA.run()
