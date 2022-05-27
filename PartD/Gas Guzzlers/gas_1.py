@@ -1,16 +1,6 @@
 from mrjob.job import MRJob
 import time
 
-"""
-Gas Guzzlers: For any transaction on Ethereum a user
-must supply gas. How has gas price changed over time?
-Have contracts become more complicated, requiring more gas, or
-less so? Also, could you correlate the complexity for some of the top-10
-contracts found in Part-B by observing the change over their transactions
-(10%)
-size
-"""
-
 class Gas_Part_D_Gas(MRJob):
 
     def mapper (self,_,line) :
@@ -41,7 +31,7 @@ class Gas_Part_D_Gas(MRJob):
         for value in values:
             if value[0] == 1: #create a map that equals 1 to append the list values.
                 list_values.append((value[1], value[2], value[3])) # append the elements of the first reducer to the list
-            elif value[0] == 2: #create a map that equals 2 to ad check value.
+            elif value[0] == 2: #create a map that equals 2 amd add check value.
                 check = 1
 
         if check == 1 and list_values :
