@@ -9,7 +9,7 @@ class PartB1_Initial_Agregation(MRJob):
        
         fields = line.split(",")
         try:
-            if len(fields) == 7:    #if field lenght ==7 continue, otherwise pass.
+            if len(fields) == 7:   
                 to_address = fields[2] 
                 value = float(fields[3])
                 yield(to_address,value)
